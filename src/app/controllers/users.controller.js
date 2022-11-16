@@ -9,15 +9,24 @@ export const getLoginUser = async (req, res) => {
       email,
     ]);
 
-    if (rows) {
-      const validateUser = await bcryptjs.compare(password, rows[0]?.password);
-      if (validateUser) {
-        const { id, name, email, dni } = rows[0];
-        res
-          .status(201)
-          .send({ id, name, email, dni, message: "Acceso exitoso." });
-      } else {
-        res.status(500).send({ status: 500, message: "Contraseña inválida" });
+    if (rows.length < 1) {
+      res
+        .status(201)
+        .send({ message: "Email no existe en nuestra base de datos" });
+    } else {
+      if (rows) {
+        const validateUser = await bcryptjs.compare(
+          password,
+          rows[0]?.password
+        );
+        if (validateUser) {
+          const { id, name, email, dni } = rows[0];
+          res
+            .status(201)
+            .send({ id, name, email, dni, message: "Acceso exitoso." });
+        } else {
+          res.status(500).send({ status: 500, message: "Contraseña inválida" });
+        }
       }
     }
   } catch (error) {
@@ -27,7 +36,6 @@ export const getLoginUser = async (req, res) => {
 
 export const createUser = async (req, res) => {
   const { name, email, password, dni } = req.body;
-  console.log("req.body", req.body);
   const hash = await bcryptjs.hash(password, 10);
   try {
     const [rows] = await pool.query(
@@ -92,24 +100,18 @@ export const deleteUserLocation = async (req, res) => {
 //Administrator
 export const getUsers = async (req, res) => {
   try {
-    var [rows] = await pool.query("SELECT * FROM users");
-    let newRow = [];
+    const [rows] = await pool.query("SELECT * FROM users");
+    const locations = await pool.query("SELECT * FROM locations");
 
-    rows.map(async (u, index) => {
-      const { password, ...restOfRow } = u;
-
-      const [rows] = await pool.query(
-        "SELECT * FROM locations WHERE id_user = ?",
-        [restOfRow?.id]
-      );
-
-      if (rows.length >= 1) {
-        restOfRow.locations = rows;
+    rows.map((u) => {
+      const locs = locations[0].filter((l) => u.id == l?.id_user);
+      console.log(locs);
+      if (locs.length !== 0) {
+        u.locations = locs;
       }
-      console.log(restOfRow);
-      console.log(typeof restOfRow);
-      newRow.push(restOfRow);
     });
+
+    const [password, ...restOfRow] = rows;
 
     res.status(201).send(restOfRow);
   } catch (error) {
