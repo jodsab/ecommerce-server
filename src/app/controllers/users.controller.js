@@ -23,7 +23,7 @@ export const getLoginUser = async (req, res) => {
         );
         if (validateUser) {
           /* const token = jwt.sign({id}) */
-          //ya si no ves esto no se
+          //ya si no ves esto no se sadasdsa
           jwt.sign(rows[0], process.env.JWT_SK, (err, token) => {
             if (err) {
               res.status(500).send({ msg: "Error al generar token" });
