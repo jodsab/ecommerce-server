@@ -29,20 +29,19 @@ export const getAllProducts = async (req, res) => {
 //Admin
 //product - new product
 export const createNewProduct = async (req, res) => {
-  const { name, description, id_productCategory, price, quantity, subQuantity} = req.body;
+  const { name, description, price, quantity } = req.body;
   try {
     const [rows] = await pool.query(
-      "INSERT INTO products (name, description, id_productCategory) VALUES (?,?,?)",
-      [name, description, id_productCategory]
+      "INSERT INTO products (name, description) VALUES (?,?)",
+      [name, description]
     );
 
-    console.log(rows);
     const idProduct = rows?.insertId;
 
     if (idProduct) {
       const [rows] = await pool.query(
-        "INSERT INTO pricesforquantity (price,quantity, subQuantity, id_product) VALUES (?,?,?,?)",
-        [price, quantity, subQuantity, idProduct]
+        "INSERT INTO pricesforquantity (price,quantity,id_product) VALUES (?,?,?)",
+        [price, quantity, idProduct]
       );
 
       if (req.files) {
@@ -52,10 +51,7 @@ export const createNewProduct = async (req, res) => {
             [f?.filename, idProduct]
           );
 
-          res.status(201).send({
-            status: 201,
-            message:"Producto agregado correctamente",
-          });
+          res.send(rows);
         });
       }
     }
@@ -66,21 +62,21 @@ export const createNewProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const { idproduct } = req.params;
-  const { name, description, id_productCategory, price, quantity, subQuantity} = req.body;
+  const { name, description, price, quantity } = req.body;
   try {
     const message = {};
     if (name || description) {
       const [rows] = await pool.query(
-        "UPDATE products SET name = IFNULL(?,name), description = IFNULL(?,description), id_productCategory = IFNULL(?,id_productCategory) WHERE id = ?",
-        [name, description, id_productCategory, idproduct]
+        "UPDATE products SET name = IFNULL(?,name), description = IFNULL(?,description) WHERE id = ?",
+        [name, description, idproduct]
       );
       message.product = rows;
     }
 
     if (price || quantity) {
       const [rows] = await pool.query(
-        "UPDATE pricesforquantity SET price = IFNULL(?,price), quantity = IFNULL(?,quantity), subQuantity IFNULL(?,subQuantity) = WHERE id_product = ?",
-        [price, quantity, subQuantity, idproduct]
+        "UPDATE pricesforquantity SET prices = IFNULL(?,price), quantity = IFNULL(?,quantity) WHERE id_product = ?",
+        [price, quantity, idproduct]
       );
       message.price = rows;
     }
