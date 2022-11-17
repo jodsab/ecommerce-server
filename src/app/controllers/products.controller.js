@@ -35,7 +35,6 @@ export const createNewProduct = async (req, res) => {
       "INSERT INTO products (name, description) VALUES (?,?)",
       [name, description]
     );
-    console.log("rows", rows);
     const idProduct = rows?.insertId;
 
     if (idProduct) {
