@@ -23,7 +23,7 @@ export const getLoginUser = async (req, res) => {
         );
         if (validateUser) {
           /* const token = jwt.sign({id}) */
-         
+
           jwt.sign(rows[0], process.env.JWT_SK, (err, token) => {
             if (err) {
               res.status(500).send({ msg: "Error al generar token" });
@@ -47,14 +47,21 @@ export const getLoginUser = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-  const { name, email, password, dni } = req.body;
+  const { name, email, password } = req.body;
   const hash = await bcryptjs.hash(password, 10);
   try {
     const [rows] = await pool.query(
-      "INSERT INTO users (name,email,password, dni) VALUES (?,?,?,?)",
-      [name, email, hash, dni]
+      "INSERT INTO users (name,email,password) VALUES (?,?,?)",
+      [name, email, hash]
     );
-    res.send(rows);
+
+    jwt.sign(req.body, process.env.JWT_SK, (err, token) => {
+      if (err) {
+        res.status(500).send({ msg: "Error al generar token" });
+      } else {
+        res.status(201).send({ msg: "success", token: token });
+      }
+    });
   } catch (error) {
     res.status(500).send(error);
   }

@@ -35,7 +35,6 @@ export const createNewProduct = async (req, res) => {
       "INSERT INTO products (name, description, id_productCategory) VALUES (?,?,?)",
       [name, description, category]
     );
-
     const idProduct = rows?.insertId;
 
     if (idProduct) {
@@ -51,9 +50,14 @@ export const createNewProduct = async (req, res) => {
             [f?.filename, idProduct]
           );
 
-          res.send(rows);
+          res.status(201).send({
+            status: 201,
+            message: "Producto agregado correctamente.",
+          });
         });
       }
+    } else {
+      res.status(500).send({ message: "Error al crear producto" });
     }
   } catch (error) {
     res.status(500).send(error);
