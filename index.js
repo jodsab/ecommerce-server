@@ -5,6 +5,7 @@ import usersRoutes from "./src/app/routes/users.routes.js";
 import productsRoutes from "./src/app/routes/products.routes.js";
 import locationsRoutes from "./src/app/routes/locations.routes.js";
 import { sendMail } from "./src/services/nodemailer/sendMail.js";
+import config from "./config.js";
 
 const app = express();
 
@@ -21,8 +22,6 @@ app.use(usersRoutes);
 app.use(locationsRoutes);
 app.use(productsRoutes);
 
-const PORT = 4000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
 });

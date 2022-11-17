@@ -1,9 +1,10 @@
 import { createPool } from "mysql2/promise";
+import config from "./config.js";
 
 export const pool = createPool({
-  host: "localhost",
-  user: "ttt_ecommerce",
-  password: "ttt_pswrd",
-  database: "mydb",
-  port: "3307",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT,
 });

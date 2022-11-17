@@ -1,5 +1,6 @@
 import { pool } from "../../../db.js";
 import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 //User
 export const getLoginUser = async (req, res) => {
@@ -20,10 +21,20 @@ export const getLoginUser = async (req, res) => {
           rows[0]?.password
         );
         if (validateUser) {
-          const { id, name, email, dni } = rows[0];
+          /* const token = jwt.sign({id}) */
+
+          jwt.sign(rows[0], "secret_key", (err, token) => {
+            if (err) {
+              res.status(500).send({ msg: "Error al generar token" });
+            } else {
+              res.status(201).send({ msg: "success", token: token });
+            }
+          });
+
+          /*           const { id, name, email, dni } = rows[0];
           res
             .status(201)
-            .send({ id, name, email, dni, message: "Acceso exitoso." });
+            .send({ id, name, email, dni, message: "Acceso exitoso." }); */
         } else {
           res.status(500).send({ status: 500, message: "Contraseña inválida" });
         }
@@ -105,15 +116,19 @@ export const getUsers = async (req, res) => {
 
     rows.map((u) => {
       const locs = locations[0].filter((l) => u.id == l?.id_user);
-      console.log(locs);
       if (locs.length !== 0) {
         u.locations = locs;
       }
     });
 
-    const [password, ...restOfRow] = rows;
+    const newArray = [];
 
-    res.status(201).send(restOfRow);
+    rows.map((e) => {
+      const { password, ...restOfObject } = e;
+      newArray.push(restOfObject);
+    });
+
+    res.status(201).send(newArray);
   } catch (error) {
     res.status(500).send(error);
   }
