@@ -3,4 +3,5 @@ package-lock.json
 
 /src/public
 
-.env
+.env.dev
+.env.prod
