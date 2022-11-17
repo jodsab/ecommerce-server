@@ -29,19 +29,19 @@ export const getAllProducts = async (req, res) => {
 //Admin
 //product - new product
 export const createNewProduct = async (req, res) => {
-  const { name, description, price, quantity } = req.body;
+  const { name, description, category, price, quantity, subQuantity} = req.body;
   try {
     const [rows] = await pool.query(
-      "INSERT INTO products (name, description) VALUES (?,?)",
-      [name, description]
+      "INSERT INTO products (name, description, id_productCategory) VALUES (?,?,?)",
+      [name, description, category]
     );
 
     const idProduct = rows?.insertId;
 
     if (idProduct) {
       const [rows] = await pool.query(
-        "INSERT INTO pricesforquantity (price,quantity,id_product) VALUES (?,?,?)",
-        [price, quantity, idProduct]
+        "INSERT INTO pricesforquantity (price,quantity,subQuantity,id_product) VALUES (?,?,?,?)",
+        [price, quantity, subQuantity, idProduct]
       );
 
       if (req.files) {
@@ -62,12 +62,12 @@ export const createNewProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const { idproduct } = req.params;
-  const { name, description, price, quantity } = req.body;
+  const { name, description, category, price, quantity, subQuantity} = req.body;
   try {
     const message = {};
     if (name || description) {
       const [rows] = await pool.query(
-        "UPDATE products SET name = IFNULL(?,name), description = IFNULL(?,description) WHERE id = ?",
+        "UPDATE products SET name = IFNULL(?,name), description = IFNULL(?,description), id_productCategory = IFNULL(?,id_productCategory) WHERE id = ?",
         [name, description, idproduct]
       );
       message.product = rows;
