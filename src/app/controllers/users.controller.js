@@ -55,13 +55,21 @@ export const createUser = async (req, res) => {
       [name, email, hash]
     );
 
-    jwt.sign(req.body, process.env.JWT_SK, (err, token) => {
-      if (err) {
-        res.status(500).send({ msg: "Error al generar token" });
-      } else {
-        res.status(201).send({ msg: "success", token: token });
-      }
-    });
+    if (rows) {
+      const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
+        email,
+      ]);
+
+      jwt.sign(rows[0], process.env.JWT_SK, (err, token) => {
+        if (err) {
+          res.status(500).send({ msg: "Error al generar token" });
+        } else {
+          res.status(201).send({ msg: "success", token: token });
+        }
+      });
+    } else {
+      res.status(500).send({ error: "Error al registrar usuario" });
+    }
   } catch (error) {
     res.status(500).send(error);
   }
