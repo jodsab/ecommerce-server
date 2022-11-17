@@ -1,6 +1,7 @@
 import { pool } from "../../../db.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import config from "../../../config.js";
 
 //User
 export const getLoginUser = async (req, res) => {
@@ -23,7 +24,7 @@ export const getLoginUser = async (req, res) => {
         if (validateUser) {
           /* const token = jwt.sign({id}) */
 
-          jwt.sign(rows[0], "secret_key", (err, token) => {
+          jwt.sign(rows[0], process.env.JWT_SK, (err, token) => {
             if (err) {
               res.status(500).send({ msg: "Error al generar token" });
             } else {
