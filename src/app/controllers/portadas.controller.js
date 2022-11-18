@@ -1,4 +1,5 @@
 import { pool } from "../../../db.js";
+import { setFormatOnSaveWithLocalhostAnPort } from "../config/functions.js";
 
 //User
 export const getPortadasList = async (req, res) => {
@@ -16,19 +17,25 @@ export const getPortadasList = async (req, res) => {
 export const createNewPortada = async (req, res) => {
   const { description } = req.body;
 
+  req.files.map((e) => e);
   try {
-    if (req.files.length >= 1) {
-      console.log("asd");
-      req.files.map(async (f) => {
-        const [rows] = await pool.query(
-          "INSERT INTO portada (url, description) VALUES (?,?)",
-          [f?.filename, description]
-        );
-
-        res.status(201).send({
-          status: 201,
-          message: "Portada agregada correctamente.",
-        });
+    if (req.files) {
+      const desktop_photo = req.files.find((e) => e.fieldname === "url");
+      const tablet_photo = req.files.find((e) => e.fieldname === "url_tablet");
+      const mobile_photo = req.files.find((e) => e.fieldname === "url_mobile");
+      console.log("desktop", desktop_photo);
+      const [rows] = await pool.query(
+        "INSERT INTO portada (url,url_tablet,url_mobile, description) VALUES (?,?,?,?)",
+        [
+          setFormatOnSaveWithLocalhostAnPort(desktop_photo?.filename),
+          setFormatOnSaveWithLocalhostAnPort(tablet_photo?.filename),
+          setFormatOnSaveWithLocalhostAnPort(mobile_photo?.filename),
+          description,
+        ]
+      );
+      res.status(201).send({
+        status: 201,
+        message: "Portada agregada correctamente.",
       });
     } else {
       res.status(500).send({ message: "Error al crear producto" });
