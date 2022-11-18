@@ -27,7 +27,7 @@ export const getLoginUser = async (req, res) => {
           jwt.sign(
             rows[0],
             process.env.JWT_SK,
-            { algorithm: "RS256" },
+            { algorithm: "HS256" },
             (err, token) => {
               if (err) {
                 res.status(500).send({ msg: "Error al generar token" });
