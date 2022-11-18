@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   getPortadasList,
   createNewPortada,
-  deleteImageOfProduct,
+  deletePortadas,
 } from "../controllers/portadas.controller.js";
 import multer from "../../multer/multer.js";
 
