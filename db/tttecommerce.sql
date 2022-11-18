@@ -18,7 +18,7 @@ CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 USE `mydb` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`permissions`
+-- Table `mydb`.`permissionss` 
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`permissions` (
   `id_permissions` INT NOT NULL,
