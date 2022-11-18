@@ -27,9 +27,15 @@ export const createNewPortada = async (req, res) => {
       const [rows] = await pool.query(
         "INSERT INTO portada (url,url_tablet,url_mobile, description) VALUES (?,?,?,?)",
         [
-          setFormatOnSaveWithLocalhostAnPort(desktop_photo?.filename),
-          setFormatOnSaveWithLocalhostAnPort(tablet_photo?.filename),
-          setFormatOnSaveWithLocalhostAnPort(mobile_photo?.filename),
+          desktop_photo
+            ? setFormatOnSaveWithLocalhostAnPort(desktop_photo?.filename)
+            : null,
+          tablet_photo
+            ? setFormatOnSaveWithLocalhostAnPort(tablet_photo?.filename)
+            : null,
+          mobile_photo
+            ? setFormatOnSaveWithLocalhostAnPort(mobile_photo?.filename)
+            : null,
           description,
         ]
       );
