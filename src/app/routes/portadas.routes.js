@@ -10,6 +10,6 @@ const router = Router();
 
 router.get("/portadas-list", getPortadasList);
 router.post("/new-portada", multer.any(), createNewPortada);
-router.delete("/delete-portada/:idimg", deleteImageOfProduct);
+router.delete("/delete-portada/:idimg", deletePortadas);
 
 export default router;
