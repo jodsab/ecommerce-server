@@ -4,6 +4,7 @@ import {
   createNewProduct,
   updateProduct,
   deleteImageOfProduct,
+  deleteProduct,
 } from "../controllers/products.controller.js";
 import multer from "../../multer/multer.js";
 
@@ -17,6 +18,7 @@ router.put(
   multer.array("url", 10),
   updateProduct
 );
-router.delete("/delete-product/:idproduct/:idimg", deleteImageOfProduct);
+router.delete("/delete-product-image/:idproduct/:idimg", deleteImageOfProduct);
+router.delete("/delete-product/:id", deleteProduct);
 
 export default router;

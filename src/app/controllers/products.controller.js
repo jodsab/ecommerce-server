@@ -83,15 +83,15 @@ export const updateProduct = async (req, res) => {
     if (name || description || category) {
       const [rows] = await pool.query(
         "UPDATE products SET name = IFNULL(?,name), description = IFNULL(?,description), id_productCategory = IFNULL(?,id_productCategory) WHERE id = ?",
-        [name, description, idproduct]
+        [name, description,category , idproduct]
       );
       message.product = rows;
     }
 
     if (price || quantity || quantity) {
       const [rows] = await pool.query(
-        "UPDATE pricesforquantity SET prices = IFNULL(?,price), quantity = IFNULL(?,quantity) WHERE id_product = ?",
-        [price, quantity, idproduct]
+        "UPDATE pricesforquantity SET prices = IFNULL(?,price), quantity = IFNULL(?,quantity, subQuantity = IFNULL(?,subQuantity)) WHERE id_product = ?",
+        [price, quantity,subQuantity, idproduct]
       );
       message.price = rows;
     }
@@ -123,3 +123,16 @@ export const deleteImageOfProduct = async (req, res) => {
     res.status(500).send(error);
   }
 };
+
+
+export const deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [rows] = await pool.query("DELETE FROM products WHERE id = ?", 
+    [id]);
+
+    res.status(201).send(rows);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
