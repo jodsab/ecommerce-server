@@ -3,6 +3,6 @@ import { getLocationsByUser } from "../controllers/locations.controller.js";
 
 const router = Router();
 
-router.get("/my-location/:iduser", getLocationsByUser);
+router.get("/update-user-data/:iduser", getLocationsByUser);
 
 export default router;
