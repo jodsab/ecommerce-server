@@ -38,7 +38,7 @@ export const createNewPortada = async (req, res) => {
   }
 };
 
-export const deleteImageOfProduct = async (req, res) => {
+export const deletePortadas = async (req, res) => {
   const { idimg } = req.params;
   try {
     const [rows] = await pool.query("DELETE FROM portada WHERE id = ?", [
