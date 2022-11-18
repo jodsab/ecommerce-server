@@ -24,13 +24,18 @@ export const getLoginUser = async (req, res) => {
         if (validateUser) {
           /* const token = jwt.sign({id}) */
 
-          jwt.sign(rows[0], process.env.JWT_SK, (err, token) => {
-            if (err) {
-              res.status(500).send({ msg: "Error al generar token" });
-            } else {
-              res.status(201).send({ msg: "success", token: token });
+          jwt.sign(
+            rows[0],
+            process.env.JWT_SK,
+            { algorithm: "RS256" },
+            (err, token) => {
+              if (err) {
+                res.status(500).send({ msg: "Error al generar token" });
+              } else {
+                res.status(201).send({ msg: "success", token: token });
+              }
             }
-          });
+          );
 
           /*           const { id, name, email, dni } = rows[0];
           res
@@ -60,13 +65,18 @@ export const createUser = async (req, res) => {
         email,
       ]);
 
-      jwt.sign(rows[0], process.env.JWT_SK, (err, token) => {
-        if (err) {
-          res.status(500).send({ msg: "Error al generar token" });
-        } else {
-          res.status(201).send({ msg: "success", token: token });
+      jwt.sign(
+        rows[0],
+        process.env.JWT_SK,
+        { algorithm: "RS256" },
+        (err, token) => {
+          if (err) {
+            res.status(500).send({ msg: "Error al generar token" });
+          } else {
+            res.status(201).send({ msg: "success", token: token });
+          }
         }
-      });
+      );
     } else {
       res.status(500).send({ error: "Error al registrar usuario" });
     }
