@@ -26,39 +26,50 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
+
+
 //Admin
 //product - new product
 export const createNewProduct = async (req, res) => {
   const { name, description, category, price, quantity, subQuantity} = req.body;
   try {
-    const [rows] = await pool.query(
-      "INSERT INTO products (name, description, id_productCategory) VALUES (?,?,?)",
-      [name, description, category]
-    );
-    const idProduct = rows?.insertId;
-
-    if (idProduct) {
       const [rows] = await pool.query(
-        "INSERT INTO pricesforquantity (price,quantity,subQuantity,id_product) VALUES (?,?,?,?)",
-        [price, quantity, subQuantity, idProduct]
+        "INSERT INTO products (name, description, id_productCategory) VALUES (?,?,?)",
+        [name, description, category]
       );
+      
+    
+      if (quantity && price && subQuantity){
 
-      if (req.files) {
-        req.files.map(async (f) => {
+        const idProduct = rows?.insertId;
+
+
+        if (idProduct) {
           const [rows] = await pool.query(
-            "INSERT INTO productImages (url, id_product) VALUES (?,?)",
-            [f?.filename, idProduct]
+            "INSERT INTO pricesforquantity (price,quantity,subQuantity,id_product) VALUES (?,?,?,?)",
+            [price, quantity, subQuantity, idProduct]
           );
-
-          res.status(201).send({
-            status: 201,
-            message: "Producto agregado correctamente.",
-          });
-        });
+    
+          if (req.files) {
+            req.files.map(async (f) => {
+              const [rows] = await pool.query(
+                "INSERT INTO productImages (url, id_product) VALUES (?,?)",
+                [f?.filename, idProduct]
+              );
+              res.status(201).send({
+                status: 201,
+                message: "Producto agregado correctamente.",
+              });
+            });
+          }
+      }else{
+        res.status(500).send({ message: "Error al crear producto" });
       }
-    } else {
-      res.status(500).send({ message: "Error al crear producto" });
-    }
+
+      }else{
+        res.status(500).send({ message: "Error al crear producto llena todos los datos" });
+      }
+    
   } catch (error) {
     res.status(500).send(error);
   }
@@ -69,7 +80,7 @@ export const updateProduct = async (req, res) => {
   const { name, description, category, price, quantity, subQuantity} = req.body;
   try {
     const message = {};
-    if (name || description) {
+    if (name || description || category) {
       const [rows] = await pool.query(
         "UPDATE products SET name = IFNULL(?,name), description = IFNULL(?,description), id_productCategory = IFNULL(?,id_productCategory) WHERE id = ?",
         [name, description, idproduct]
@@ -77,7 +88,7 @@ export const updateProduct = async (req, res) => {
       message.product = rows;
     }
 
-    if (price || quantity) {
+    if (price || quantity || quantity) {
       const [rows] = await pool.query(
         "UPDATE pricesforquantity SET prices = IFNULL(?,price), quantity = IFNULL(?,quantity) WHERE id_product = ?",
         [price, quantity, idproduct]
