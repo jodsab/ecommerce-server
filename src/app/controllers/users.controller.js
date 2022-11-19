@@ -139,11 +139,18 @@ export const getUsers = async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM users");
     const locations = await pool.query("SELECT * FROM locations");
-
+    const permissions = await pool.query(
+      "SELECT r.description, p.id_user FROM permissions p LEFT JOIN rol r ON r.id = p.id_rol"
+    );
+    console.log("permissions", permissions[0]);
     rows.map((u) => {
-      const locs = locations[0].filter((l) => u.id == l?.id_user);
-      if (locs.length !== 0) {
-        u.locations = locs;
+      const location = locations[0].filter((l) => u.id == l?.id_user);
+      const permission = permissions[0].filter((l) => u.id == l?.id_user);
+      if (location.length !== 0) {
+        u.locations = location;
+      }
+      if (permission.length !== 0) {
+        u.permissions = permission.map((p) => p.description);
       }
     });
 
@@ -158,4 +165,9 @@ export const getUsers = async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
+};
+
+export const updatePermission = async (req, res) => {
+  try {
+  } catch (error) {}
 };
