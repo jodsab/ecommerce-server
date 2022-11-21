@@ -57,10 +57,10 @@ export const createNewProduct = async (req, res) => {
               "INSERT INTO productImages (url, id_product) VALUES (?,?)",
               [f?.filename, idProduct]
             );
-            res.status(201).send({
-              status: 201,
-              message: "Producto agregado correctamente.",
-            });
+          });
+          res.status(201).send({
+            status: 201,
+            message: "Producto agregado correctamente.",
           });
         }
       } else {
