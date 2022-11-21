@@ -5,7 +5,11 @@ import { setFormatOnSaveWithLocalhostAnPort } from "../config/functions.js";
 export const getPortadasList = async (req, res) => {
   try {
     const [rows] = await pool.query("SELECT * FROM portada");
-    res.status(201).send(rows);
+    if (rows) {
+      res.status(201).send(rows);
+    } else {
+      res.status(500).send({ message: "No hay portadas para cargar" });
+    }
   } catch (error) {
     res
       .status(500)

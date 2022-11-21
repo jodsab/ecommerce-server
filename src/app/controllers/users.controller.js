@@ -90,6 +90,7 @@ export const updateUser = async (req, res) => {
   const {
     name,
     email,
+    celNumber,
     password,
     dni,
     description,
@@ -100,13 +101,14 @@ export const updateUser = async (req, res) => {
   try {
     const response = {};
 
-    if (name || email || password || dni) {
+    if (name || email || celNumber || password || dni) {
       const [rows] = await pool.query(
-        "UPDATE users SET name = IFNULL(?,name), email = IFNULL(?, email), password= IFNULL(?,password), dni = IFNULL(?,dni) WHERE id = ?",
-        [name, email, password, dni, id]
+        "UPDATE users SET name = IFNULL(?,name), email = IFNULL(?, email), celNumber = IFNULL(?, celNumber), password= IFNULL(?,password), dni = IFNULL(?,dni) WHERE id = ?",
+        [name, email, celNumber, password, dni, id]
       );
       response.users = rows;
     }
+
     if (description || latitude || longitude || reference) {
       const [rows] = await pool.query(
         "INSERT INTO locations (description, latitude, longitude, reference, id_user) VALUES (?,?,?,?,?)",
@@ -114,7 +116,6 @@ export const updateUser = async (req, res) => {
       );
       response.location = rows;
     }
-
     res.status(201).send(response);
   } catch (error) {
     res.status(500).send(error);
@@ -142,7 +143,6 @@ export const getUsers = async (req, res) => {
     const permissions = await pool.query(
       "SELECT r.description, p.id_user FROM permissions p LEFT JOIN rol r ON r.id = p.id_rol"
     );
-    console.log("permissions", permissions[0]);
     rows.map((u) => {
       const location = locations[0].filter((l) => u.id == l?.id_user);
       const permission = permissions[0].filter((l) => u.id == l?.id_user);
@@ -157,10 +157,10 @@ export const getUsers = async (req, res) => {
     const newArray = [];
 
     rows.map((e) => {
-      const { password, ...restOfObject } = e;
+      const { password, id_permissions, ...restOfObject } = e;
       newArray.push(restOfObject);
     });
-
+    console.log("new", newArray);
     res.status(201).send(newArray);
   } catch (error) {
     res.status(500).send(error);

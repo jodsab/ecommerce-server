@@ -6,6 +6,8 @@ import productsRoutes from "./src/app/routes/products.routes.js";
 import locationsRoutes from "./src/app/routes/locations.routes.js";
 import portadasRoutes from "./src/app/routes/portadas.routes.js";
 import categoriesRoutes from "./src/app/routes/categories.routes.js";
+import rolesRoutes from "./src/app/routes/roles.routes.js";
+
 import { sendMail } from "./src/services/nodemailer/sendMail.js";
 import * as url from "url";
 import config from "./config.js";
@@ -29,6 +31,7 @@ app.use(locationsRoutes);
 app.use(productsRoutes);
 app.use(portadasRoutes);
 app.use(categoriesRoutes);
+app.use(rolesRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
