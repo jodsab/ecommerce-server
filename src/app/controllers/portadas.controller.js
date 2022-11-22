@@ -20,14 +20,12 @@ export const getPortadasList = async (req, res) => {
 //Administrator
 export const createNewPortada = async (req, res) => {
   const { description } = req.body;
-
-  req.files.map((e) => e);
   try {
     if (req.files) {
       const desktop_photo = req.files.find((e) => e.fieldname === "url");
       const tablet_photo = req.files.find((e) => e.fieldname === "url_tablet");
       const mobile_photo = req.files.find((e) => e.fieldname === "url_mobile");
-      console.log("desktop", desktop_photo);
+
       const [rows] = await pool.query(
         "INSERT INTO portada (url,url_tablet,url_mobile, description) VALUES (?,?,?,?)",
         [
