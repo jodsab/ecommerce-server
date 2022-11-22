@@ -160,7 +160,6 @@ export const getUsers = async (req, res) => {
       const { password, id_permissions, ...restOfObject } = e;
       newArray.push(restOfObject);
     });
-    console.log("new", newArray);
     res.status(201).send(newArray);
   } catch (error) {
     res.status(500).send(error);

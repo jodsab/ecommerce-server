@@ -3,23 +3,16 @@ import { pool } from "../../../db.js";
 //User
 export const getAllProducts = async (req, res) => {
   try {
-    const response = [];
-    const [rows] = await pool.query("SELECT * FROM products");
+    const [products] = await pool.query("SELECT * FROM products");
+    const [images] = await pool.query("SELECT * FROM productimages");
 
-    rows.map(async (r) => {
-      const arrImages = [];
-      const [rows] = await pool.query(
-        "SELECT id, url FROM productImages WHERE id_product = ?",
-        [r?.id]
-      );
-      rows.map((i) => {
-        arrImages.push(i);
+    Promise.all([products, images]).then((result) => {
+      products?.map((p) => {
+        p.images = images.filter((i) => p.id === i.id_product);
       });
-      console.log(arrImages);
-      rows.length >= 1 && response.push(arrImages);
-    });
 
-    res.send(response);
+      res.send(products);
+    });
   } catch (error) {
     res.status(500).send(error);
   }
