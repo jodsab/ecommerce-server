@@ -1,14 +1,17 @@
 import { pool } from "../../../db.js";
+import { setFormatOnSaveWithLocalhostAnPort } from "../config/functions.js";
 
 //User
 export const getAllProducts = async (req, res) => {
   try {
     const [products] = await pool.query("SELECT * FROM products");
     const [images] = await pool.query("SELECT * FROM productimages");
+    const [prices] = await pool.query("SELECT * FROM pricesforquantity");
 
-    Promise.all([products, images]).then((result) => {
+    Promise.all([products, images, prices]).then((result) => {
       products?.map((p) => {
         p.images = images.filter((i) => p.id === i.id_product);
+        p.prices = prices.filter((i) => p.id === i.id_product);
       });
 
       res.send(products);
@@ -48,7 +51,7 @@ export const createNewProduct = async (req, res) => {
           req.files.map(async (f) => {
             const [rows] = await pool.query(
               "INSERT INTO productImages (url, id_product) VALUES (?,?)",
-              [f?.filename, idProduct]
+              [setFormatOnSaveWithLocalhostAnPort(f?.filename), idProduct]
             );
           });
           res.status(201).send({
@@ -126,7 +129,7 @@ export const updateProduct = async (req, res) => {
       req.files.map(async (f) => {
         const [rows] = await pool.query(
           "INSERT INTO productimages (url, id_product) VALUES (?,?)",
-          [f?.filename, idproduct]
+          [setFormatOnSaveWithLocalhostAnPort(f?.filename), idproduct]
         );
         message.images = rows;
       });
