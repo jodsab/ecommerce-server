@@ -109,7 +109,7 @@ export const updateProduct = async (req, res) => {
     req.body;
   try {
     const message = {};
-    if (name || description || category) {
+    if (name || description || category || idproduct) {
       const [rows] = await pool.query(
         "UPDATE products SET name = IFNULL(?,name), description = IFNULL(?,description), id_productCategory = IFNULL(?,id_productCategory) WHERE id = ?",
         [name, description, category, idproduct]
