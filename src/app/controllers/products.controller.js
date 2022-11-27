@@ -7,11 +7,13 @@ export const getAllProducts = async (req, res) => {
     const [products] = await pool.query("SELECT * FROM products");
     const [images] = await pool.query("SELECT * FROM productimages");
     const [prices] = await pool.query("SELECT * FROM pricesforquantity");
+    const [categories] = await pool.query("SELECT * FROM productcategory");
 
-    Promise.all([products, images, prices]).then((result) => {
+    Promise.all([products, images, prices, categories]).then((result) => {
       products?.map((p) => {
         p.images = images.filter((i) => p.id === i.id_product);
         p.prices = prices.filter((i) => p.id === i.id_product);
+        p.category = categories.filter((i) => p.id_productCategory === i.id);
       });
 
       res.send(products);
