@@ -116,7 +116,25 @@ export const updateUser = async (req, res) => {
       );
       response.location = rows;
     }
-    res.status(201).send(response);
+
+    const [newUser] = await pool.query("SELECT * FROM users WHERE id = ?", [
+      id,
+    ]);
+
+    jwt.sign(
+      newUser[0],
+      process.env.JWT_SK,
+      { algorithm: "HS256" },
+      (err, token) => {
+        if (err) {
+          res.status(500).send({ msg: "Error al generar token" });
+        } else {
+          res
+            .status(201)
+            .send({ msg: "success", token: token, response: response });
+        }
+      }
+    );
   } catch (error) {
     res.status(500).send(error);
   }
