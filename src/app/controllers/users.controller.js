@@ -110,9 +110,9 @@ export const updateUser = async (req, res) => {
       response.users = rows;
     }
 
-    if (city || latitude || longitude || reference) {
+    if (city || districtName || districtCode || state || street) {
       const [rows] = await pool.query(
-        "INSERT INTO locations (city, districtName, districtCode, state, street, id_user) VALUES (?,?,?,?,?)",
+        "INSERT INTO locations (city, districtName, districtCode, state, street, id_user) VALUES (?,?,?,?,?,?)",
         [city, districtName, districtCode, state, street, id]
       );
       response.location = rows;
