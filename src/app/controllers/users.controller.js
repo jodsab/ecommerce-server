@@ -94,11 +94,11 @@ export const updateUser = async (req, res) => {
     password,
     dni,
     city,
-    districtName,
-    districtCode,
+    district,
     state,
     street,
   } = req.body;
+
   try {
     const response = {};
 
@@ -110,7 +110,9 @@ export const updateUser = async (req, res) => {
       response.users = rows;
     }
 
-    if (city || districtName || districtCode || state || street) {
+    if (city || district || state || street) {
+      const districtCode = district.cod;
+      const districtName = district.name;
       const [rows] = await pool.query(
         "INSERT INTO locations (city, districtName, districtCode, state, street, id_user) VALUES (?,?,?,?,?,?)",
         [city, districtName, districtCode, state, street, id]
@@ -121,9 +123,13 @@ export const updateUser = async (req, res) => {
     const [newUser] = await pool.query("SELECT * FROM users WHERE id = ?", [
       id,
     ]);
-
+    const [location] = await pool.query(
+      "SELECT * FROM locations WHERE id_user = ?",
+      [id]
+    );
+    const newUserInfo = { ...newUser[0], location: location };
     jwt.sign(
-      newUser[0],
+      newUserInfo,
       process.env.JWT_SK,
       { algorithm: "HS256" },
       (err, token) => {
